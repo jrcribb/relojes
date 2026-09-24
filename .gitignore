@@ -1,0 +1,5 @@
+tests/*.png
+
+# Local Sites checkout and generated deployment archive.
+/site/
+/multi-relojes-site.tar.gz

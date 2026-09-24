@@ -1,89 +1,42 @@
 # Multi Relojes
 
-Aplicación web para controlar varios temporizadores y cronómetros desde una misma vista, con personalización, almacenamiento local y modo oscuro.
+Seis temporizadores o cronómetros en una sola pantalla, sin desplazamiento. Aplicación local sin servidor, instalación ni dependencias de ejecución.
 
-## Descripción
+## Abrir
 
-Multi Relojes es una mini app frontal desarrollada en HTML, CSS y JavaScript. Permite crear varios relojes simultáneos, cada uno con su propio nombre, tipo, duración inicial y botones rápidos de añadido de minutos. También incluye un cronómetro y una reproducción de sonido al finalizar un temporizador.
-
-## Características
-
-- Múltiples relojes activos en una sola pantalla
-- Soporte para dos tipos:
-  - Temporizador
-  - Cronómetro
-- Configuración individual por reloj:
-  - Nombre
-  - Tipo
-  - Duración inicial en minutos
-  - Incrementos rápidos (por ejemplo: +1m, +3m, +5m)
-  - Activación de sonido
-- Botones para iniciar, pausar y reiniciar cada reloj
-- Progreso visual circular del temporizador
-- Modo oscuro / claro
-- Persistencia local con `localStorage` para recordar la configuración y el estado
-
-## Tecnologías
-
-- HTML5
-- CSS3
-- JavaScript vanilla
-- LocalStorage del navegador
-
-## Requisitos
-
-No requiere instalación ni dependencias externas.
-
-Solo necesitas:
-
-- Un navegador moderno (Chrome, Edge, Firefox o Safari)
-- Abrir el archivo `relojes.html` en el navegador
-
-## Cómo ejecutar la aplicación
-
-1. Descarga o clona este repositorio.
-2. Abre el archivo `relojes.html` en tu navegador.
-3. La app se cargará automáticamente y estará lista para usar.
+Abrí `relojes.html` en un navegador moderno. Conservá `styles.css`, `clock-core.js` y `app.js` en la misma carpeta.
 
 ## Uso
 
-### Temporizador
+- Tocá el nombre de un reloj para configurar su nombre, tipo y duración.
+- Elegí de uno a tres incrementos enteros de minutos y una alarma: sin sonido, corta (un beep) o larga (tres beeps).
+- Usá **Probar sonido** para escuchar la selección. Los beeps se generan internamente con Web Audio, sin archivos externos ni conexión.
+- **Iniciar**, **Pausar** y **Reiniciar** controlan cada reloj. Al finalizar se muestra **Finalizado** y **Repetir** inicia otra cuenta.
+- Los incrementos aumentan tanto el tiempo restante como el total; el porcentaje nunca supera el 100 %.
+- Cambiar duración o tipo reinicia ese reloj en pausa. Cambiar solamente nombre, alarma o incrementos conserva la marcha.
+- La duración y los incrementos admiten entre 1 y 5999 minutos enteros, con una duración total máxima de 5999 minutos.
 
-- Haz clic sobre el nombre del reloj para editarlo.
-- Define la duración inicial en minutos.
-- Usa los botones con incrementos para agregar más tiempo rápidamente.
-- Pulsa el botón de reproducción para iniciar.
-- Cuando el tiempo llega a cero, suena una alarma y el temporizador se detiene.
+La distribución mantiene seis relojes: dos columnas en vertical y tres en horizontal. Se adapta a la altura disponible. Se verificaron pantallas de 320 × 568, 360 × 640, 390 × 844, 568 × 320, 844 × 390, 1280 × 720 y 1920 × 1080, incluyendo el diálogo sin scroll.
 
-### Cronómetro
+## Guardado y accesibilidad
 
-- Configura el reloj como tipo `Cronómetro`.
-- Inicia el conteo con el botón de reproducción.
-- El tiempo se acumula hasta detenerlo.
-- Puedes reiniciarlo con el botón de parada.
+Los relojes y el tema se guardan en el navegador. Los datos anteriores compatibles se recuperan automáticamente. Si el almacenamiento no está disponible o los datos son inválidos, se muestra un aviso. Sin una preferencia guardada, el tema sigue la preferencia del sistema.
 
-## Persistencia
+Los controles tienen etiquetas accesibles y foco visible. La configuración se maneja con teclado, se cierra con Escape y devuelve el foco al reloj. Los estados se indican con texto y color.
 
-La interfaz guarda la configuración de los relojes en `localStorage`, por lo que al recargar la página se mantienen los datos cargados.
+El tiempo se calcula a partir de marcas horarias, por lo que se recupera correctamente al volver a la pestaña. Un navegador puede suspender una página en segundo plano o con el dispositivo bloqueado: en ese caso, la señal se procesa al reanudarla. Para alarmas puntuales, mantené la página activa y el sonido habilitado. Una recarga puede requerir una interacción para habilitar nuevamente el audio.
 
-## Estructura del proyecto
+## Archivos y pruebas
 
-```text
-relojes/
-├── relojes.html
-├── README.md
-└── (sin dependencias ni build system)
-```
+- `relojes.html`: estructura y formulario.
+- `styles.css`: diseño adaptable y temas.
+- `clock-core.js`: cálculo, estados y recuperación de relojes.
+- `app.js`: interfaz, almacenamiento y generación de sonido.
+- `tests/clock-core.test.js`: pruebas de lógica sin dependencias (`node --test tests/clock-core.test.js`).
+- `tests/browser.cjs`: comprobación de tamaños y comportamiento con Playwright y Chromium disponibles (`node tests/browser.cjs`). Estas herramientas son solo para desarrollo.
 
-## Personalización
+## Grupos por color
 
-La aplicación usa variables CSS para colores, soportando un tema claro y oscuro. También puede adaptarse fácilmente si deseas cambiar:
+En la configuración de cada reloj, elegí **Grupo por color**. Los relojes del mismo color son excluyentes: al iniciar uno, los demás se pausan conservando su tiempo. Los de otros colores y los que están **Sin grupo** siguen funcionando independientemente. También funciona con temporizadores y grupos de más de dos relojes. Para alternar dos cronómetros como en ajedrez, asignales el mismo color e iniciá el que debe contar.
 
-- paleta de colores
-- tamaños y proporciones
-- mensajes de UI
-- comportamiento de alarmas
-
-## Nota
-
-Este proyecto está pensado como una herramienta práctica y ligera para uso personal o educativo, sin backend ni servicios externos.
+Los grupos se guardan al recargar. Cambiar el grupo de un reloj en marcha pausa a sus nuevos compañeros. La vista móvil agrega 16 píxeles de separación arriba, además del espacio seguro del dispositivo.
